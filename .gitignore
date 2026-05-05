@@ -1,5 +1,4 @@
-# Virtual environment
-.venv/
-
-# PyCharm
 .idea/
+.venv/
+__pycache__/
+.pytest_cache/
