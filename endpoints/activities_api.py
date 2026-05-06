@@ -18,6 +18,3 @@ class ActivitiesApi:
 
     def delete_activity_by_id(self, activity_id):
         return requests.delete(f"{self.base_url}/Activities/{activity_id}")
-
-    def get_activity_by_invalid_id(self, invalid_activity_id):
-        return requests.get(f"{self.base_url}/Activities/{invalid_activity_id}")

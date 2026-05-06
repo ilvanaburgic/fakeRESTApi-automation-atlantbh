@@ -1,4 +1,5 @@
 import pytest
+from config import BASE_URL
 from endpoints.activities_api import ActivitiesApi
 from endpoints.authors_api import AuthorsApi
 from endpoints.books_api import BooksApi
@@ -8,7 +9,7 @@ from endpoints.users_api import UsersApi
 
 @pytest.fixture
 def base_url():
-    return "https://fakerestapi.azurewebsites.net/api/v1"
+    return BASE_URL
 
 @pytest.fixture
 def activities_api(base_url):

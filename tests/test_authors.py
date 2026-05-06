@@ -1,3 +1,22 @@
+from test_data.authors import AUTHORS_PAYLOAD
+
+
+AUTHORS_KEYS = ["id", "idBook", "firstName", "lastName"]
+
+
+def assert_has_keys(data, keys):
+    for key in keys:
+        assert key in data
+        assert data[key] is not None
+
+
+def assert_author_matches_payload(data, payload):
+    assert data["id"] == payload["id"]
+    assert data["idBook"] == payload["idBook"]
+    assert data["firstName"] == payload["firstName"]
+    assert data["lastName"] == payload["lastName"]
+
+
 def test_get_all_authors(authors_api):
     response = authors_api.get_all_authors()
     data = response.json()
@@ -6,15 +25,7 @@ def test_get_all_authors(authors_api):
     assert isinstance(data, list)
     assert len(data) > 0
 
-    assert "id" in data[0]
-    assert "idBook" in data[0]
-    assert "firstName" in data[0]
-    assert "lastName" in data[0]
-
-    assert data[0]["id"] is not None
-    assert data[0]["idBook"] is not None
-    assert data[0]["firstName"] is not None
-    assert data[0]["lastName"] is not None
+    assert_has_keys(data[0], AUTHORS_KEYS)
 
     assert response.headers["Content-Type"].startswith("application/json")
     assert response.elapsed.total_seconds() < 1
@@ -24,8 +35,7 @@ def test_create_new_author(authors_api, author_id, book_id):
     payload = {
         "id": author_id,
         "idBook": book_id,
-        "firstName": "John",
-        "lastName": "Doe",
+        **AUTHORS_PAYLOAD
     }
 
     response = authors_api.create_new_author(payload)
@@ -34,20 +44,9 @@ def test_create_new_author(authors_api, author_id, book_id):
     assert response.status_code in [200, 201]
     assert isinstance(data, dict)
 
-    assert "id" in data
-    assert "idBook" in data
-    assert "firstName" in data
-    assert "lastName" in data
+    assert_has_keys(data, AUTHORS_KEYS)
 
-    assert data["id"] is not None
-    assert data["idBook"] is not None
-    assert data["firstName"] is not None
-    assert data["lastName"] is not None
-
-    assert data["id"] == payload["id"]
-    assert data["idBook"] == payload["idBook"]
-    assert data["firstName"] == payload["firstName"]
-    assert data["lastName"] == payload["lastName"]
+    assert_author_matches_payload(data, payload)
 
     assert response.headers["Content-Type"].startswith("application/json")
     assert response.elapsed.total_seconds() < 1
@@ -61,15 +60,7 @@ def test_get_author_book_by_book_id(authors_api, book_id):
     assert isinstance(data, list)
     assert len(data) > 0
 
-    assert "id" in data[0]
-    assert "idBook" in data[0]
-    assert "firstName" in data[0]
-    assert "lastName" in data[0]
-
-    assert data[0]["id"] is not None
-    assert data[0]["idBook"] is not None
-    assert data[0]["firstName"] is not None
-    assert data[0]["lastName"] is not None
+    assert_has_keys(data[0], AUTHORS_KEYS)
 
     assert data[0]["idBook"] == book_id
 
@@ -84,15 +75,7 @@ def test_get_author_by_id(authors_api, author_id):
     assert response.status_code == 200
     assert isinstance(data, dict)
 
-    assert "id" in data
-    assert "idBook" in data
-    assert "firstName" in data
-    assert "lastName" in data
-
-    assert data["id"] is not None
-    assert data["idBook"] is not None
-    assert data["firstName"] is not None
-    assert data["lastName"] is not None
+    assert_has_keys(data, AUTHORS_KEYS)
 
     assert data["id"] == author_id
 
@@ -104,8 +87,7 @@ def test_update_author_by_id(authors_api, author_id, book_id):
     payload = {
         "id": author_id,
         "idBook": book_id,
-        "firstName": "John",
-        "lastName": "Doe",
+        **AUTHORS_PAYLOAD
     }
 
     response = authors_api.update_author_by_id(author_id, payload)
@@ -114,20 +96,9 @@ def test_update_author_by_id(authors_api, author_id, book_id):
     assert response.status_code == 200
     assert isinstance(data, dict)
 
-    assert "id" in data
-    assert "idBook" in data
-    assert "firstName" in data
-    assert "lastName" in data
+    assert_has_keys(data, AUTHORS_KEYS)
 
-    assert data["id"] is not None
-    assert data["idBook"] is not None
-    assert data["firstName"] is not None
-    assert data["lastName"] is not None
-
-    assert data["id"] == payload["id"]
-    assert data["idBook"] == payload["idBook"]
-    assert data["firstName"] == payload["firstName"]
-    assert data["lastName"] == payload["lastName"]
+    assert_author_matches_payload(data, payload)
 
     assert response.headers["Content-Type"].startswith("application/json")
     assert response.elapsed.total_seconds() < 1
