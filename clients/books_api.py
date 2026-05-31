@@ -1,6 +1,9 @@
 import requests
 
 class BooksApi:
+    """
+    Contains all API requests related to Books endpoints.
+    """
     def __init__(self, base_url):
         self.base_url = base_url
 

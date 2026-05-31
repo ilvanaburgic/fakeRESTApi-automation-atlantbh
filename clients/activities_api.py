@@ -1,6 +1,9 @@
 import requests
 
 class ActivitiesApi:
+    """
+    Contains all API requests related to Activities endpoints.
+    """
     def __init__(self, base_url):
         self.base_url = base_url
 

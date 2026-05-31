@@ -1,20 +1,9 @@
 from test_data.activities import ACTIVITIES_PAYLOAD
+from utils.assertions import assert_data_matches_payload, assert_has_keys, assert_valid_json_response
+from config import MAX_RESPONSE_TIME
 
 
 ACTIVITY_KEYS = ["id", "title", "dueDate", "completed"]
-
-
-def assert_has_keys(data, keys):
-    for key in keys:
-        assert key in data
-        assert data[key] is not None
-
-
-def assert_activity_matches_payload(data, payload):
-    assert data["id"] == payload["id"]
-    assert data["title"] == payload["title"]
-    assert data["dueDate"] == payload["dueDate"]
-    assert data["completed"] == payload["completed"]
 
 
 def test_get_all_activities(activities_api):
@@ -27,8 +16,7 @@ def test_get_all_activities(activities_api):
 
     assert_has_keys(data[0], ACTIVITY_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_create_new_activity(activities_api, activity_id):
@@ -45,10 +33,9 @@ def test_create_new_activity(activities_api, activity_id):
 
     assert_has_keys(data, ACTIVITY_KEYS)
 
-    assert_activity_matches_payload(data, payload)
+    assert_data_matches_payload(data, payload, ACTIVITY_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_get_activity_by_id(activities_api, activity_id):
@@ -62,8 +49,7 @@ def test_get_activity_by_id(activities_api, activity_id):
 
     assert data["id"] == activity_id
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_update_activity_by_id(activities_api, activity_id):
@@ -80,10 +66,9 @@ def test_update_activity_by_id(activities_api, activity_id):
 
     assert_has_keys(data, ACTIVITY_KEYS)
 
-    assert_activity_matches_payload(data, payload)
+    assert_data_matches_payload(data, payload, ACTIVITY_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_delete_activity_by_id(activities_api, activity_id):
@@ -93,7 +78,7 @@ def test_delete_activity_by_id(activities_api, activity_id):
     assert response.text == ""
     assert response.headers.get("Content-Length") == "0"
 
-    assert response.elapsed.total_seconds() < 1
+    assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME
 
 
 def test_get_activity_by_invalid_id(activities_api, invalid_activity_id):
@@ -102,4 +87,4 @@ def test_get_activity_by_invalid_id(activities_api, invalid_activity_id):
     assert response.status_code == 404
     assert "Not Found" in response.text
 
-    assert response.elapsed.total_seconds() < 1
+    assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME

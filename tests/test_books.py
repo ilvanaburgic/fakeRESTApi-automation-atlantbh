@@ -1,22 +1,9 @@
 from test_data.books import BOOKS_PAYLOAD
+from utils.assertions import assert_data_matches_payload, assert_has_keys, assert_valid_json_response
+from config import MAX_RESPONSE_TIME
 
 
 BOOK_KEYS = ["id", "title", "description", "pageCount", "excerpt", "publishDate"]
-
-
-def assert_has_keys(data, keys):
-    for key in keys:
-        assert key in data
-        assert data[key] is not None
-
-
-def assert_book_matches_payload(data, payload):
-    assert data["id"] == payload["id"]
-    assert data["title"] == payload["title"]
-    assert data["description"] == payload["description"]
-    assert data["pageCount"] == payload["pageCount"]
-    assert data["excerpt"] == payload["excerpt"]
-    assert data["publishDate"] == payload["publishDate"]
 
 
 def test_get_all_books(books_api):
@@ -29,8 +16,7 @@ def test_get_all_books(books_api):
 
     assert_has_keys(data[0], BOOK_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_create_new_book(books_api, book_id):
@@ -46,10 +32,9 @@ def test_create_new_book(books_api, book_id):
     assert isinstance(data, dict)
 
     assert_has_keys(data, BOOK_KEYS)
-    assert_book_matches_payload(data, payload)
+    assert_data_matches_payload(data, payload, BOOK_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_get_book_by_id(books_api, book_id):
@@ -63,8 +48,7 @@ def test_get_book_by_id(books_api, book_id):
 
     assert data["id"] == book_id
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_update_book_by_id(books_api, book_id):
@@ -81,10 +65,9 @@ def test_update_book_by_id(books_api, book_id):
 
     assert_has_keys(data, BOOK_KEYS)
 
-    assert_book_matches_payload(data, payload)
+    assert_data_matches_payload(data, payload, BOOK_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_delete_book_by_id(books_api, book_id):
@@ -94,7 +77,7 @@ def test_delete_book_by_id(books_api, book_id):
     assert response.text == ""
     assert response.headers.get("Content-Length") == "0"
 
-    assert response.elapsed.total_seconds() < 1
+    assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME
 
 
 def test_update_book_without_body(books_api, book_id):
@@ -106,4 +89,4 @@ def test_update_book_without_body(books_api, book_id):
     assert "A non-empty request body is required." in response.text
 
     assert "application/problem+json" in response.headers["Content-Type"]
-    assert response.elapsed.total_seconds() < 1
+    assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME

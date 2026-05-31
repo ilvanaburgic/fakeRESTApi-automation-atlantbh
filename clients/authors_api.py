@@ -1,6 +1,9 @@
 import requests
 
 class AuthorsApi:
+    """
+    Contains all API requests related to Authors endpoints.
+    """
     def __init__(self, base_url):
         self.base_url = base_url
 

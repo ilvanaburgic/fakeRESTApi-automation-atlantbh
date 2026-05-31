@@ -1,10 +1,10 @@
 import pytest
 from config import BASE_URL
-from endpoints.activities_api import ActivitiesApi
-from endpoints.authors_api import AuthorsApi
-from endpoints.books_api import BooksApi
-from endpoints.cover_photos_api import CoverPhotosApi
-from endpoints.users_api import UsersApi
+from clients.activities_api import ActivitiesApi
+from clients.authors_api import AuthorsApi
+from clients.books_api import BooksApi
+from clients.cover_photos_api import CoverPhotosApi
+from clients.users_api import UsersApi
 
 
 @pytest.fixture

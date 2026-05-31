@@ -1,20 +1,9 @@
 from test_data.authors import AUTHORS_PAYLOAD
+from utils.assertions import assert_data_matches_payload, assert_has_keys, assert_valid_json_response
+from config import MAX_RESPONSE_TIME
 
 
 AUTHORS_KEYS = ["id", "idBook", "firstName", "lastName"]
-
-
-def assert_has_keys(data, keys):
-    for key in keys:
-        assert key in data
-        assert data[key] is not None
-
-
-def assert_author_matches_payload(data, payload):
-    assert data["id"] == payload["id"]
-    assert data["idBook"] == payload["idBook"]
-    assert data["firstName"] == payload["firstName"]
-    assert data["lastName"] == payload["lastName"]
 
 
 def test_get_all_authors(authors_api):
@@ -27,8 +16,7 @@ def test_get_all_authors(authors_api):
 
     assert_has_keys(data[0], AUTHORS_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_create_new_author(authors_api, author_id, book_id):
@@ -46,10 +34,9 @@ def test_create_new_author(authors_api, author_id, book_id):
 
     assert_has_keys(data, AUTHORS_KEYS)
 
-    assert_author_matches_payload(data, payload)
+    assert_data_matches_payload(data, payload, AUTHORS_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_get_author_book_by_book_id(authors_api, book_id):
@@ -64,8 +51,7 @@ def test_get_author_book_by_book_id(authors_api, book_id):
 
     assert data[0]["idBook"] == book_id
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_get_author_by_id(authors_api, author_id):
@@ -79,8 +65,7 @@ def test_get_author_by_id(authors_api, author_id):
 
     assert data["id"] == author_id
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_update_author_by_id(authors_api, author_id, book_id):
@@ -98,10 +83,9 @@ def test_update_author_by_id(authors_api, author_id, book_id):
 
     assert_has_keys(data, AUTHORS_KEYS)
 
-    assert_author_matches_payload(data, payload)
+    assert_data_matches_payload(data, payload, AUTHORS_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_delete_author_by_id(authors_api, author_id):
@@ -111,7 +95,7 @@ def test_delete_author_by_id(authors_api, author_id):
     assert response.text == ""
     assert response.headers.get("Content-Length") == "0"
 
-    assert response.elapsed.total_seconds() < 1
+    assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME
 
 
 def test_create_author_without_body(authors_api):
@@ -121,5 +105,6 @@ def test_create_author_without_body(authors_api):
     assert response.status_code == 400
     assert "A non-empty request body is required." in response.text
     assert isinstance(data, dict)
+
     assert "application/problem+json" in response.headers["Content-Type"]
-    assert response.elapsed.total_seconds() < 1
+    assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME

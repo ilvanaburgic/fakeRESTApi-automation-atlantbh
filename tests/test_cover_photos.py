@@ -1,19 +1,9 @@
 from test_data.cover_photos import COVER_PHOTOS_PAYLOAD
+from utils.assertions import assert_data_matches_payload, assert_has_keys, assert_valid_json_response
+from config import MAX_RESPONSE_TIME
 
 
 COVER_PHOTO_KEYS = ["id", "idBook", "url"]
-
-
-def assert_has_keys(data, keys):
-    for key in keys:
-        assert key in data
-        assert data[key] is not None
-
-
-def assert_cover_photo_matches_payload(data, payload):
-    assert data["id"] == payload["id"]
-    assert data["idBook"] == payload["idBook"]
-    assert data["url"] == payload["url"]
 
 
 def test_get_all_cover_photos(cover_photos_api):
@@ -26,8 +16,7 @@ def test_get_all_cover_photos(cover_photos_api):
 
     assert_has_keys(data[0], COVER_PHOTO_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_create_new_cover_photo(cover_photos_api, cover_photo_id, book_id):
@@ -45,10 +34,9 @@ def test_create_new_cover_photo(cover_photos_api, cover_photo_id, book_id):
 
     assert_has_keys(data, COVER_PHOTO_KEYS)
 
-    assert_cover_photo_matches_payload(data, payload)
+    assert_data_matches_payload(data, payload, COVER_PHOTO_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_get_cover_photos_by_book_id(cover_photos_api, book_id):
@@ -63,8 +51,7 @@ def test_get_cover_photos_by_book_id(cover_photos_api, book_id):
 
     assert data[0]["idBook"] == book_id
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_get_cover_photos_by_id(cover_photos_api, cover_photo_id):
@@ -78,8 +65,7 @@ def test_get_cover_photos_by_id(cover_photos_api, cover_photo_id):
 
     assert data["id"] == cover_photo_id
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_update_cover_photo_by_id(cover_photos_api, cover_photo_id, book_id):
@@ -97,10 +83,9 @@ def test_update_cover_photo_by_id(cover_photos_api, cover_photo_id, book_id):
 
     assert_has_keys(data, COVER_PHOTO_KEYS)
 
-    assert_cover_photo_matches_payload(data, payload)
+    assert_data_matches_payload(data, payload, COVER_PHOTO_KEYS)
 
-    assert response.headers["Content-Type"].startswith("application/json")
-    assert response.elapsed.total_seconds() < 1
+    assert_valid_json_response(response)
 
 
 def test_delete_cover_photo_by_id(cover_photos_api, cover_photo_id):
@@ -110,4 +95,4 @@ def test_delete_cover_photo_by_id(cover_photos_api, cover_photo_id):
     assert response.text == ""
     assert response.headers.get("Content-Length") == "0"
 
-    assert response.elapsed.total_seconds() < 1
+    assert response.elapsed.total_seconds() < MAX_RESPONSE_TIME

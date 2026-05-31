@@ -1,6 +1,9 @@
 import requests
 
 class CoverPhotosApi:
+    """
+    Contains all API requests related to CoverPhotos endpoints.
+    """
     def __init__(self, base_url):
         self.base_url = base_url
 

@@ -1,4 +1,4 @@
 AUTHORS_PAYLOAD = {
     "firstName": "John",
-    "lastName": "Doe",
+    "lastName": "Doe"
 }
